@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
+import { Icon } from 'react-native-elements';
 import {
   Button,
-  CheckBox,
   ScrollView,
   StyleSheet,
   Text,
@@ -34,13 +34,24 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     height: 15,
     width: 15,
-    color: 'black',
+    borderWidth: 2,
+    borderColor: 'black',
+  },
+  doneTasks: {
+    textDecorationLine: 'line-through',
+    textDecorationStyle: 'solid',
+    fontWeight: 'bold',
   },
   dNone: {
     display: 'none',
   },
   errClr: {
     backgroundColor: 'pink',
+  },
+  errItem: {
+    backgroundColor: 'pink',
+    color: 'white',
+    padding: 5,
   },
   fContainer: { flexDirection: 'row', marginTop: 5 },
   h15: { height: 15 },
@@ -51,10 +62,10 @@ const styles = StyleSheet.create({
   flex1: { flex: 1, height: 5 },
   fs18: { fontSize: 18 },
   goalItem: { backgroundColor: 'gainsboro', padding: 5 },
-
   inputsSection: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between',
   },
   justify: {
     alignItems: 'center',
@@ -82,7 +93,9 @@ const {
   BgGreen,
   checkbox,
   dNone,
+  doneTasks,
   errClr,
+  errItem,
   flex1,
   flexRow,
   fContainer,
@@ -105,15 +118,33 @@ export default function App() {
   const [errIdx, setErrIdx] = useState(-1);
 
   const addGoal = () => {
-    setGoals([...goals, goal]);
-    setGoal('');
+    const goalIdx = goals.indexOf(goal);
+    if (goalIdx !== -1) {
+      setErrIdx(goalIdx);
+      setErr('Goal already exist !');
+      setTimeout(() => {
+        setErrIdx(-1);
+        setErr('');
+      }, 4000);
+    } else {
+      setGoals([...goals, goal]);
+      setGoal('');
+      setMode('Add');
+    }
   };
 
-  const updateGoal = (goal) => {
-    setGoal(goal);
+  const updateGoal = (goalItem) => {
+    setGoal(goalItem);
     setMode('Edit');
-    completeGoals.splice(completeGoals.indexOf(goal), 1);
-    setCompleteGoals([...completeGoals]);
+    goals.splice(goals.indexOf(goalItem), 1);
+    setGoals(goals);
+  };
+
+  const onCancel = () => {
+    setMode('Add');
+    if (goal !== '') {
+      addGoal();
+    }
   };
 
   const deleteGoal = (goal) => {
@@ -121,27 +152,17 @@ export default function App() {
     setCompleteGoals([...completeGoals]);
   };
 
-  const markDone = () => {};
+  const markDone = (goal) => {
+    goals.splice(goals.indexOf(goal), 1);
+    setGoals([...goals]);
+    setCompleteGoals([...completeGoals, goal]);
+  };
 
   const resetGoals = () => {
     setGoals([]);
+    setGoal('');
     setCompleteGoals([]);
   };
-
-  // const updateGoals = () => {
-  //   const existIdx = goals.indexOf(goal);
-  //   if (existIdx === -1) {
-  //     setGoals([...goals, goal]);
-  //   } else {
-  //     setErr('Goal already exist !');
-  //     setErrIdx(existIdx);
-  //     setTimeout(() => {
-  //       setErr('');
-  //       setErrIdx('');
-  //     }, 8000);
-  //   }
-  //   setGoal('');
-  // };
 
   return (
     <ScrollView style={screen}>
@@ -164,65 +185,71 @@ export default function App() {
         </View>
         <View style={[btn, BgRed]}>
           <Button
-            title='RESET'
+            title={mode === 'Add' ? 'RESET' : 'Cancel'}
             color='white'
-            onPress={resetGoals}
+            onPress={() => (mode === 'Add' ? resetGoals() : onCancel())}
             raised={true}
           />
         </View>
       </View>
       <View>
-        <View style={fContainer}>
+        <View style={[fContainer, goals.length ? '' : dNone]}>
           <View style={[BgRed, flex1, justify]}></View>
           <View style={[BgBlue, flex1, justify]}></View>
           <View style={[BgGreen, flex1, justify]}></View>
         </View>
+        <View
+          style={[BgRed, errItem, inputsSection, mt5, err !== '' ? '' : dNone]}
+        >
+          <Text>{err}</Text>
+        </View>
         {goals.map((goal, idx) => (
-          <>
-            <View
-              key={idx}
-              style={[
-                goalItem,
-                inputsSection,
-                mt5,
-                errIdx === idx ? successClr : '',
-              ]}
-            >
-              <CheckBox
-                value={false}
-                onValueChange={(e) => deleteGoal(goal)}
-                style={[checkbox, mr10]}
-              />
-              <Text style={fs18}>{goal}</Text>
-            </View>
-          </>
+          <View
+            key={idx}
+            style={[
+              goalItem,
+              inputsSection,
+              mt5,
+              errIdx === idx ? successClr : '',
+            ]}
+          >
+            <Icon
+              name='square-outline'
+              type='ionicon'
+              color='green'
+              onPress={(e) => markDone(goal)}
+            />
+            <Text style={fs18}>{goal}</Text>
+            <Text style={fs18} onPress={() => updateGoal(goal)}>
+              Edit
+            </Text>
+          </View>
         ))}
       </View>
       <View>
-        <View style={fContainer}>
+        <View style={[fContainer, completeGoals.length ? '' : dNone]}>
           <View style={[BgRed, flex1, justify]}></View>
           <View style={[BgBlue, flex1, justify]}></View>
           <View style={[BgGreen, flex1, justify]}></View>
         </View>
         {completeGoals.map((goal, idx) => (
-          <>
-            <View
-              key={idx}
-              style={[
-                goalItem,
-                inputsSection,
-                mt5,
-                errIdx === idx ? successClr : '',
-              ]}
-            >
-              <CheckBox
-                value={false}
-                onValueChange={(e) => deleteGoal(goal)}
-                style={[checkbox, mr10]}
-              />
-              <Text style={fs18}>{goal}</Text>
-            </View>
-          </>
+          <View
+            key={idx}
+            style={[
+              goalItem,
+              inputsSection,
+              mt5,
+              errIdx === idx ? successClr : '',
+            ]}
+          >
+            <Icon
+              name='checkbox'
+              type='ionicon'
+              color='green'
+              onPress={(e) => deleteGoal(goal)}
+            />
+            <Text style={[fs18, doneTasks]}>{goal}</Text>
+          </View>
         ))}
       </View>
     </ScrollView>
