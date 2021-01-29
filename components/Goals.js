@@ -15,7 +15,7 @@ const {
 } = styles;
 
 const Pallet = (props) => {
-  const { err, errIdx, goals, updateGoal, deleteGoal, markDone } = props;
+  const { err, errIdx, goals, updateGoal, updateModal, markDone } = props;
   return (
     <View>
       <View
@@ -51,7 +51,7 @@ const Pallet = (props) => {
               name='trash'
               type='ionicon'
               color='red'
-              onPress={(e) => deleteGoal(goal)}
+              onPress={(e) => updateModal(true, goal)}
             />
           )}
 

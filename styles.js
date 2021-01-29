@@ -31,6 +31,9 @@ export default {
     textDecorationStyle: 'solid',
     fontWeight: 'bold',
   },
+  txtBold: {
+    fontWeight: 'bold',
+  },
   dNone: {
     display: 'none',
   },
@@ -50,6 +53,9 @@ export default {
   },
   flex1: { flex: 1, height: 5 },
   fs18: { fontSize: 18 },
+  fs20: {
+    fontSize: 20,
+  },
   goalItem: { backgroundColor: 'gainsboro', padding: 5 },
   inputsSection: {
     flexDirection: 'row',
@@ -62,6 +68,17 @@ export default {
   },
   mt5: { marginTop: 5 },
   mr10: { marginRight: 10 },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'gainsboro',
+    borderRadius: 15,
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    marginHorizontal: 20,
+    marginVertical: 380,
+  },
   screen: {
     paddingTop: 50,
     padding: 30,

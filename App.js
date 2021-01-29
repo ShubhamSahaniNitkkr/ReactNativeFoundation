@@ -5,6 +5,7 @@ import { ScrollView } from 'react-native';
 import InputSection from './components/InputSection';
 import Pallets from './components/Pallets';
 import Goals from './components/Goals';
+import DeleteModal from './components/DeleteModal';
 // styles
 import styles from './styles';
 const { screen } = styles;
@@ -14,6 +15,7 @@ export default function App() {
   const [goal, setGoal] = useState('');
   const [goals, setGoals] = useState([]);
   const [completeGoals, setCompleteGoals] = useState([]);
+  const [modal, setModal] = useState({ visible: false, goal: null });
   const [err, setErr] = useState('');
   const [errIdx, setErrIdx] = useState(-1);
 
@@ -50,6 +52,11 @@ export default function App() {
   const deleteGoal = (goal) => {
     completeGoals.splice(completeGoals.indexOf(goal), 1);
     setCompleteGoals([...completeGoals]);
+    setModal({ visible: false, goal: null });
+  };
+
+  const updateModal = (visible, goal) => {
+    setModal({ visible, goal });
   };
 
   const markDone = (goal) => {
@@ -87,6 +94,11 @@ export default function App() {
         err={err}
         errIdx={errIdx}
         goals={completeGoals}
+        updateModal={updateModal}
+      />
+      <DeleteModal
+        modal={modal}
+        updateModal={updateModal}
         deleteGoal={deleteGoal}
       />
     </ScrollView>
